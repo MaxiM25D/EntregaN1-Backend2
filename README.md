@@ -1,5 +1,22 @@
 ## Estructura del proyecto
 
+ROUTES → CONTROLLER → MANAGER → MODEL (MongoDB)
+-El manager habla con la base.
+-El controller habla con el cliente.
+
+Autenticación:
+LOGIN → CONTROLLER → MANAGER → bcrypt → jwt → respuesta
+
+Validación:
+/current → passport jwt strategy → controller
+
+POST /api/carts/:cid/product/:pid
+↓ routes/cart.routes.js
+↓ cart.controller.js
+↓ cart.manager.js
+↓ cart.model.js
+↓ MongoDB
+
 EntregaN1/
 │
 ├── node_modules/
@@ -14,8 +31,8 @@ EntregaN1/
 │ │ └── env.config.js
 │ │
 │ ├── controllers/
-│ │ ├── cart.controller.js
-│ │ ├── product.controller.js
+│ │ ├── cart.controller.js ✅
+│ │ ├── product.controller.js ✅
 │ │ ├── user.controller.js
 │ │
 │ ├── managers/

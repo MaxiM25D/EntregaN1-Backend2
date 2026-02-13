@@ -1,120 +1,39 @@
-import { userManager } from "../managers/user-manager.js";
-import { createUsers } from "../utils/user-utils.js";
+import { UserManager } from "../managers/user.manager.js";
+import { createHash } from "../utils/bcrypt.js";
 
-class UserControllers {
-  constructor(manager) {
-    this.manager = manager;
+const userManager = new UserManager();
+
+export const registerUser = async (req, res) => {
+  try {
+
+    const { first_name, last_name, email, password, age } = req.body;
+
+    if (!first_name || !last_name || !email || !password || !age) {
+      return res.status(400).json({ error: "Todos los campos son obligatorios" });
+    }
+
+    const existingUser = await userManager.getUserByEmail(email);
+
+    if (existingUser) {
+      return res.status(400).json({ error: "El usuario ya existe" });
+    }
+
+    const hashedPassword = createHash(password);
+
+    const newUser = await userManager.createUser({
+      first_name,
+      last_name,
+      email,
+      password: hashedPassword,
+      age
+    });
+
+    res.status(201).json({
+      message: "Usuario registrado correctamente",
+      user: newUser
+    });
+
+  } catch (error) {
+    res.status(500).json({ error: error.message });
   }
-
-  getAll = async (req, res) => {
-    try {
-      const { page, limit, last_name, sort } = req.query;
-      const response = await this.manager.getAll(page, limit, last_name, sort);
-      const nextPage = response.hasNextPage
-        ? `http://localhost:8080/users?page=${response.nextPage}`
-        : null;
-      const prevPage = response.hasPrevPage
-        ? `http://localhost:8080/users?page=${response.prevPage}`
-        : null;
-      res.json({
-        payload: response.docs,
-        info: {
-          count: response.totalDocs,
-          totalPages: response.totalPages,
-          nextLink: nextPage,
-          prevLink: prevPage,
-          hasPrevPage: response.hasPrevPage,
-          hasNextPage: response.hasNextPage,
-        },
-      });
-    } catch (error) {
-      res.status(400).json({ message: error.message });
-    }
-  };
-
-  getById = async (req, res) => {
-    try {
-      const { id } = req.params;
-      const response = await this.manager.getById(id);
-      if (!response) throw new Error("Usuario no encontrado");
-      return res.json(response);
-    } catch (error) {
-      console.log(error);
-      res.status(400).json({ message: error.message });
-    }
-  };
-
-  getByName = async (req, res) => {
-    try {
-      const { name } = req.query;
-      const response = await this.manager.getByName(name);
-      if (!response) throw new Error("Usuario no encontrado");
-      return res.json(response);
-    } catch (error) {
-      res.status(400).json({ message: error.message });
-    }
-  };
-
-  create = async (req, res) => {
-    try {
-      const response = await this.manager.create(req.body);
-      res.json(response);
-    } catch (error) {
-      res.status(400).json({ message: error.message });
-    }
-  };
-
-  update = async (req, res) => {
-    try {
-      const { id } = req.params;
-      const response = await this.manager.update(id, req.body);
-      if (!response) throw new Error("Usuario no encontrado");
-      return res.json(response);
-    } catch (error) {
-      res.status(400).json({ message: error.message });
-    }
-  };
-
-  delete = async (req, res) => {
-    try {
-      const { id } = req.params;
-      const response = await this.manager.delete(id);
-      if (!response) throw new Error("Usuario no encontrado");
-      return res.json(response);
-    } catch (error) {
-      res.status(400).json({ message: error.message });
-    }
-  };
-
-  createManyUsers = async (req, res) => {
-    try {
-      const data = createUsers();
-      const response = await this.manager.create(data);
-      res.json({ message: `${response.length} usuarios creados` });
-    } catch (error) {
-      res.status(400).json({ message: error.message });
-    }
-  };
-
-  addPetToUser = async (req, res) => {
-    try {
-      const { userId, petId } = req.params;
-      const response = await this.manager.addPetToUser(userId, petId);
-      if (!response) throw new Error("Usuario no encontrado");
-      return res.json(response);
-    } catch (error) {
-      res.status(400).json({ message: error.message });
-    }
-  };
-
-  aggregation = async (req, res) => {
-    try {
-      const response = await this.manager.aggregation();
-      res.json(response);
-    } catch (error) {
-      res.status(400).json({ message: error.message });
-    }
-  };
-}
-
-export const userControllers = new UserControllers(userManager);
+};
