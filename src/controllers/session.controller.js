@@ -2,6 +2,7 @@ import jwt from "jsonwebtoken";
 import env from "../config/env.config.js";
 import { UserManager } from "../managers/user.manager.js";
 import { createHash, isValidPassword } from "../utils/bcrypt.js";
+import { Cart } from "../models/cart.model.js";
 
 const userManager = new UserManager();
 
@@ -21,13 +22,15 @@ export const registerUser = async (req, res) => {
 
     const hashedPassword = createHash(password);
 
+    const newCart = await Cart.create({ products: [] });
     const newUser = await userManager.create({
-      first_name,
-      last_name,
-      email,
-      password: hashedPassword,
-      age
-    });
+    first_name,
+    last_name,
+    email,
+    password: hashedPassword,
+    age,
+    cart: newCart._id
+});
 
     res.status(201).json({
       message: "Usuario registrado correctamente",
