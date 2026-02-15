@@ -1,103 +1,32 @@
-import { CartModel } from "../models/cart-model.js";
+import { Cart } from "../models/cart.model.js";
 
-class CartManager {
-  constructor(model) {
-    this.model = model;
+export class CartManager {
+
+  async create() {
+    return await Cart.create({ products: [] });
   }
 
-  createCart = async () => {
-    try {
-      return await this.model.create({});
-    } catch (error) {
-      throw new Error(error);
-    }
-  };
+  async getById(id) {
+    return await Cart.findById(id).populate("products.product");
+  }
 
-  getById = async (cid) => {
-    try {
-      return await this.model.findById(cid).populate("products.product");
-    } catch (error) {
-      throw new Error(error);
-    }
-  };
+  async addProduct(cartId, productId) {
 
-  addProductToCart = async (cid, pid) => {
-    try {
-      const cart = await this.model.findById(cid);
-      if (!cart) return null;
+    const cart = await Cart.findById(cartId);
 
-      const productIndex = cart.products.findIndex(
-        (p) => p.product.toString() === pid
-      );
-
-      if (productIndex !== -1) {
-        cart.products[productIndex].quantity++;
-      } else {
-        cart.products.push({ product: pid, quantity: 1 });
-      }
-
-      return await cart.save();
-    } catch (error) {
-      throw new Error(error);
-    }
-  };
-
-  removeProductFromCart = async (cid, pid) => {
-  try {
-    const cart = await this.model.findById(cid);
     if (!cart) return null;
 
-    cart.products = cart.products.filter(
-      (p) => p.product.toString() !== pid
+    const existingProduct = cart.products.find(
+      p => p.product.toString() === productId
     );
 
-    return await cart.save();
-  } catch (error) {
-    throw new Error(error);
+    if (existingProduct) {
+      existingProduct.quantity += 1;
+    } else {
+      cart.products.push({ product: productId, quantity: 1 });
+    }
+
+    await cart.save();
+    return cart;
   }
-  };
-
-  updateCart = async (cid, products) => {
-  try {
-    return await this.model.findByIdAndUpdate(
-      cid,
-      { products },
-      { new: true }
-    );
-  } catch (error) {
-    throw new Error(error);
-  }
-  };
-
-  updateProductQuantity = async (cid, pid, quantity) => {
-  try {
-    const cart = await this.model.findById(cid);
-    if (!cart) return null;
-
-    const product = cart.products.find(
-      (p) => p.product.toString() === pid
-    );
-
-    if (!product) return null;
-
-    product.quantity = quantity;
-    return await cart.save();
-  } catch (error) {
-    throw new Error(error);
-  }
-  };
-
-  clearCart = async (cid) => {
-  try {
-    return await this.model.findByIdAndUpdate(
-      cid,
-      { products: [] },
-      { new: true }
-    );
-  } catch (error) {
-    throw new Error(error);
-  }
-  };
 }
-
-export const cartManager = new CartManager(CartModel);

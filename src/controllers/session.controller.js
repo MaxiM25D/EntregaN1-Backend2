@@ -1,9 +1,10 @@
-import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import env from "../config/env.config.js";
 import { UserManager } from "../managers/user.manager.js";
+import { createHash, isValidPassword } from "../utils/bcrypt.js";
 
 const userManager = new UserManager();
+
 
 // REGISTER
 export const registerUser = async (req, res) => {
@@ -16,7 +17,7 @@ export const registerUser = async (req, res) => {
       return res.status(400).json({ message: "El usuario ya existe" });
     }
 
-    const hashedPassword = await bcrypt.hash(password, 10);
+    const hashedPassword = createHash(password);
 
     const newUser = await userManager.create({
       first_name,
@@ -27,14 +28,14 @@ export const registerUser = async (req, res) => {
     });
 
     res.status(201).json({
-      message: "Usuario registrado correctamente",
-      user: newUser
+      message: "Usuario registrado correctamente"
     });
 
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 };
+
 
 // LOGIN
 export const loginUser = async (req, res) => {
@@ -47,11 +48,12 @@ export const loginUser = async (req, res) => {
       return res.status(400).json({ message: "Credenciales inválidas" });
     }
 
-    const isValid = await bcrypt.compare(password, user.password);
-    if (!isValid) {
+    const valid = isValidPassword(user, password);
+    if (!valid) {
       return res.status(400).json({ message: "Credenciales inválidas" });
     }
 
+    // 🔐 JWT con sub
     const token = jwt.sign(
       {
         sub: user._id,
@@ -70,6 +72,7 @@ export const loginUser = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
+
 
 // CURRENT
 export const currentUser = async (req, res) => {

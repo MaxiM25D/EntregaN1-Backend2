@@ -4,6 +4,14 @@ ROUTES → CONTROLLER → MANAGER → MODEL (MongoDB)
 -El manager habla con la base.
 -El controller habla con el cliente.
 
+ROUTES
+↓
+CONTROLLER (maneja HTTP)
+↓
+MANAGER (habla con Mongo)
+↓
+MODEL (schema Mongoose)
+
 Autenticación:
 LOGIN → CONTROLLER → MANAGER → bcrypt → jwt → respuesta
 
