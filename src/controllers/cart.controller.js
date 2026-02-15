@@ -5,7 +5,7 @@ const cartManager = new CartManager();
 export const createCart = async (req, res) => {
   try {
     const newCart = await cartManager.create();
-    res.status(201).json(newCart);
+    res.status(201).json({ message: "Carrito creado con exito!", newCart });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -19,7 +19,7 @@ export const getCartById = async (req, res) => {
       return res.status(404).json({ message: "Carrito no encontrado" });
     }
 
-    res.json(cart);
+    res.json({message: "Carrito por ID obtenido con exito!", cart});
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
