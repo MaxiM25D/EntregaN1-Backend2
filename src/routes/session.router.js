@@ -1,9 +1,5 @@
 import { Router } from "express";
-import {
-  registerUser,
-  loginUser,
-  currentUser
-} from "../controllers/session.controller.js";
+import {registerUser, loginUser, currentUser} from "../controllers/session.controller.js";
 import { requireAuth } from "../middleware/jwt.middleware.js";
 
 const router = Router();

@@ -11,7 +11,9 @@ export const registerUser = async (req, res) => {
   try {
 
     const { first_name, last_name, email, password, age } = req.body;
-
+    if (!first_name || !last_name || !email || !password || !age) {
+    return res.status(400).json({ message: "Faltan datos obligatorios" });
+    }
     const existingUser = await userManager.findByEmail(email);
     if (existingUser) {
       return res.status(400).json({ message: "El usuario ya existe" });
@@ -28,7 +30,8 @@ export const registerUser = async (req, res) => {
     });
 
     res.status(201).json({
-      message: "Usuario registrado correctamente"
+      message: "Usuario registrado correctamente",
+      user: newUser
     });
 
   } catch (error) {
@@ -65,6 +68,9 @@ export const loginUser = async (req, res) => {
 
     res.json({
       message: "Login exitoso",
+      user: {
+        first_name: user.first_name,
+        last_name: user.last_name},
       token
     });
 
