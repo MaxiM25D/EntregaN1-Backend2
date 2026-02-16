@@ -25,7 +25,13 @@ router.post(
     );
 
     res.json({
-      message: "Login exitoso",
+      message: "Login exitoso " + req.user.first_name + " " + req.user.last_name,
+      user: {
+        first_name: req.user.first_name,
+        last_name: req.user.last_name,
+        email: req.user.email,
+        role: req.user.role
+      },
       token
     });
   }

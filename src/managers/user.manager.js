@@ -7,7 +7,7 @@ export class UserManager {
   }
 
   async getById(id) {
-    return await User.findById(id);
+    return await User.findById(id).lean();
   }
 
   async findByEmail(email) {

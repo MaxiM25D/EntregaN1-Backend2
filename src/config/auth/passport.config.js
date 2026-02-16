@@ -1,10 +1,11 @@
 import passport from "passport";
 import { Strategy as LocalStrategy } from "passport-local";
 import { Strategy as JwtStrategy, ExtractJwt } from "passport-jwt";
-import { User } from "../../models/user.model.js";
+import { UserManager } from "../../managers/user.manager.js";
 import { isValidPassword } from "../../utils/bcrypt.js";
 import env from "../env.config.js";
 
+const userManager = new UserManager();
 export const initPassport = () => {
 
    // 🔐 LOCAL STRATEGY (LOGIN)
@@ -18,7 +19,7 @@ export const initPassport = () => {
       async (email, password, done) => {
         try {
 
-          const user = await User.findOne({ email });
+          const user = await userManager.findByEmail(email);
 
           if (!user) {
             return done(null, false, { message: "Usuario no encontrado" });
@@ -50,7 +51,7 @@ export const initPassport = () => {
       async (payload, done) => {
         try {
 
-          const user = await User.findById(payload.sub).lean();
+          const user = await userManager.findById(payload.sub);
 
           if (!user) return done(null, false);
 
