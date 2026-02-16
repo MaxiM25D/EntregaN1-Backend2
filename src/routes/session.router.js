@@ -3,7 +3,7 @@ import passport from "passport";
 import jwt from "jsonwebtoken";
 import env from "../config/env.config.js";
 import {registerUser, currentUser} from "../controllers/session.controller.js";
-import { requireAuth } from "../middleware/jwt.middleware.js";
+
 
 
 const router = Router();
@@ -31,6 +31,6 @@ router.post(
   }
 );
 // CURRENT con JwtStrategy
-router.get("/current", requireAuth, passport.authenticate("jwt", { session: false }), currentUser);
+router.get("/current", passport.authenticate("jwt", { session: false }), currentUser);
 
 export default router;
