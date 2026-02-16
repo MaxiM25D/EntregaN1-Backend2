@@ -39,31 +39,33 @@ EntregaN1/
 │ │ └── env.config.js
 │ │
 │ ├── controllers/
-│ │ ├── cart.controller.js ✅
-│ │ ├── product.controller.js ✅
+│ │ ├── cart.controller.js
+│ │ ├── product.controller.js
 │ │ ├── user.controller.js
+│ │ └── session.controller.js
 │ │
 │ ├── managers/
 │ │ ├── cart.manager.js
 │ │ ├── product.manager.js
 │ │ ├── user.manager.js
+│ │ └── session.manager.js
 │ │
 │ ├── middleware/
 │ │ ├── auth.middleware.js
-│ │ ├── logger.middleware.js
-│ │ ├── policies.middleware.js
+│ │ ├── jwt.middleware.js
+│ │ ├── role.middleware.js
 │ │
 │ ├── models/
 │ │ ├── cart.model.js  
 │ │ ├── product.model.js  
-│ │ ├── user.model.js
-│ │ └── student.model.js
+│ │ └── user.model.js
 │ │
-│ ├── routes/
+│ ├── router/
 │ │ ├── cart.routes.js  
 │ │ ├── product.routes.js  
 │ │ ├── user.routes.js  
-│ │ └── index.js  
+│ │ ├── session.routes.js
+│ │ └── routes.js  
 │ │
 │ ├── server/
 │ │ └── server.app.js
