@@ -22,8 +22,8 @@ export const startServer = async () => {
   await connectAuto();
 
   // Inicializar Passport (JWT)
-  initPassport();
   app.use(passport.initialize());
+  initPassport();
 
   // Inicializar rutas
   initRouters(app);

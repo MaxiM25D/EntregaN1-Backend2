@@ -6,6 +6,6 @@ const router = Router();
 
 router.post("/register", registerUser);
 router.post("/login", loginUser);
-router.get("/current", requireAuth, currentUser);
+router.get("/current", requireAuth, passport.authenticate("jwt", { session: false }), currentUser);
 
 export default router;
